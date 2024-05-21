@@ -981,7 +981,7 @@ print(zone_adj_barplot)
 # Combine the plots
 zone_barplots <- ggarrange(zone_raw_barplot, zone_adj_barplot, ncol= 2, nrow= 1, 
                                    widths= c(1,1), heights = c(1,1)) %>%
-  annotate_figure(bottom=text_grob("Grazing pressure", hjust=0.5, vjust=0))
+  annotate_figure(bottom=text_grob("Grazing zone", hjust=0.5, vjust=0))
 
 
 # Display the combined plot
@@ -1192,7 +1192,7 @@ den_hab_adj <- den_nvis %>%
   # Adjusted by frequency of dens
   mutate(den_freq=n) %>%
   select(-n) %>%
-  mutate(den_perc=(den_freq/sum(den_adj$den_freq))*100) %>%
+  mutate(den_perc=(den_freq/sum(den_hab_adj$den_freq))*100) %>%
   # Remove dens outside MFWS
   filter(!is.na(mfws_habitat))
 
@@ -1202,33 +1202,17 @@ den_hab_plot <- den_hab_adj %>%
   left_join(mfws_group, by="mfws_habitat") %>%
   # Calculate frequency of dens adjusted by available area 
   mutate(den_freq_adj=((den_freq/area_km2)*
-                         mfws_area_minus_aquatic/nrow(den_adj))) %>%
+                         mfws_area_minus_aquatic/nrow(den_hab_adj))) %>%
   # Calculate percentage of dens adjusted by available area
-  mutate(den_perc_adj=(den_freq_adj/sum(den_plot$den_freq_adj))*100, 
+  mutate(den_perc_adj=(den_freq_adj/sum(den_hab_plot$den_freq_adj))*100, 
          mfws_habitat=factor(mfws_habitat, 
                              levels = c("Grassland",
                                         "Eucalypt forest",
                                         "Eucalypt woodland",
                                         "Regrowth",
                                         "Aquatic")))
-
-den_hab_plot <- den_hab_adj %>%
-  # Join with df to get area_km2 column
-  left_join(mfws_group, by="mfws_habitat") %>%
-  # Calculate frequency of dens adjusted by available area 
-  mutate(den_freq_adj=((den_freq/area_km2)*
-                          mfws_area_minus_aquatic/nrow(den_adj))) %>%
-  # Calculate percentage of dens adjusted by available area
-  mutate(den_perc_adj=(den_freq_adj/sum(den_freq_adj))*100) %>%
-  # Reorder levels of mfws_habitat
-  mutate(mfws_habitat=factor(mfws_habitat, 
-                               levels=c("Grassland",
-                                          "Eucalypt forest",
-                                          "Eucalypt woodland",
-                                          "Regrowth",
-                                          "Aquatic")))
 # Reorder levels of mfws_habitat
-den_plot$mfws_habitat <- factor(den_plot$mfws_habitat, 
+den_hab_plot$mfws_habitat <- factor(den_hab_plot$mfws_habitat, 
                                  levels = c("Grassland", "Eucalypt forest", "Eucalypt woodland", "Regrowth", "Aquatic"))
 
 # Display chi-square test results
@@ -1248,7 +1232,7 @@ Bar plot
 
 ```{r}
 # Plot raw den percentages per habitat type
-hab_raw_barplot <- ggplot(data=den_plot, 
+hab_raw_barplot <- ggplot(data=den_hab_plot, 
   aes(x= mfws_habitat, y=den_perc, fill=mfws_habitat)) + 
   geom_col() +
   annotate("text", x=4.4, y=60, label = parse(text = "bold('a')"), size=5) +
@@ -1268,7 +1252,7 @@ hab_raw_barplot <- ggplot(data=den_plot,
 print(hab_raw_barplot)
 
 # Plot adjusted den percentages per habitat type
-hab_adj_barplot <- ggplot(data=den_plot, 
+hab_adj_barplot <- ggplot(data=den_hab_plot, 
   aes(x= mfws_habitat, y=den_perc_adj, fill=mfws_habitat)) +
   geom_col() +
   annotate("text", x=4.4, y=60, label = parse(text = "bold('b')"), size=5) +
@@ -1281,7 +1265,7 @@ hab_adj_barplot <- ggplot(data=den_plot,
         axis.line.x = element_line(colour="grey"),
         axis.line.y = element_line(colour="grey")) +
   xlab("") + ylab("Percentage adjusted for availability (%)") +
-  scale_fill_viridis(discrete=T, option="D", begin=1, end=0) +
+  scale_fill_viridis(discrete=T, option="D", begin=0.1, end=0.9) +
   scale_y_continuous(limits=c(0, 60), breaks=seq(0, 60, 10)) 
 
 # Display the plot
