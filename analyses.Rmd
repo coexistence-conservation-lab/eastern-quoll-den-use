@@ -942,7 +942,7 @@ den_zone_plot$grazing_pressure <- factor(den_zone_plot$grazing_pressure,
 zone_raw_barplot <- ggplot(data=den_zone_plot, 
   aes(x= grazing_pressure, y=den_perc, fill=grazing_pressure)) +
   geom_col() +
-  annotate("text", x=3.5, y=90, label = parse(text = "bold('a')"), size=5) +
+  annotate("text", x=3.5, y=90, label = parse(text = "bold('c')"), size=5) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(), 
         panel.background = element_blank(), 
@@ -962,7 +962,7 @@ print(zone_raw_barplot)
 zone_adj_barplot <- ggplot(data=den_zone_plot, 
   aes(x= grazing_pressure, y=den_perc_adj, fill=grazing_pressure)) +
   geom_col() +
-  annotate("text", x=3.5, y=60, label = parse(text = "bold('b')"), size=5) +
+  annotate("text", x=3.5, y=60, label = parse(text = "bold('d')"), size=5) +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(), 
         panel.background = element_blank(), 
@@ -1414,6 +1414,11 @@ den_summary_plot <- ggarrange(summary_plot_dens,summary_plot_den2,
                                widths= c(2,0.5,1), heights = c(2.5,3,2))
 print(den_summary_plot)
 
+# Combine grazing zone and habitat type plots for publication
+summary_barplots <- ggarrange(hab_barplots, zone_barplots, ncol= 1, nrow= 2, 
+                                   widths= c(1,1), heights = c(1,1)) 
+
+print(summary_barplots)
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
@@ -1425,6 +1430,9 @@ ggsave(summary_plot_den3, filename="output/summary plot dens3.jpeg",
        width=275, height=225, units="mm")
 
 ggsave(den_summary_plot, filename="output/den summary plot.jpeg", 
+       width=275, height=260, units="mm")
+
+ggsave(summary_barplots, filename="output/grazing zone habitat summary plot.jpeg", 
        width=275, height=260, units="mm")
 ```
 
