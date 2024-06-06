@@ -49,7 +49,7 @@ devtools::install_github("obrl-soil/slga")
 
 ```{r}
 # Install and load required packages
-pacman::p_load(beepr, data.table, devtools, dplyr, elevatr, ggmap, ggplot2, ggpubr, ggsn, ggspatial, freqtables, installr, janitor, lme4, lubridate, MuMIn, ncdf4, plotrix, plotROC, raster, rasterVis, readxl, reshape2, rgdal, rgl, rJava, rstudioapi, scales, SDMtune, sf, slga, st, stringr, terra, tidyr, tidyterra, tidyverse, viridis, zeallot)
+pacman::p_load(beepr, data.table, devtools, dplyr, elevatr, forcats, ggmap, ggplot2, ggpubr, ggsn, ggspatial, freqtables, installr, janitor, lme4, lubridate, MuMIn, ncdf4, plotrix, plotROC, raster, rasterVis, readxl, reshape2, rgdal, rgl, rJava, rstudioapi, scales, SDMtune, sf, slga, st, stringr, terra, tidyr, tidyterra, tidyverse, viridis, zeallot)
 ```
 
 We also set the working directory to where this R markdown is saved using the `rstudioapi` package.
@@ -416,9 +416,12 @@ long <- data %>%
             n = length(den_substrate)) %>%
   na.omit() %>%
   mutate(den_substrate=factor(den_substrate, 
-                          levels=c("Hole", "Log", 
+                          levels=c("Rabbit warren", "Log", 
                                    "Grass", "Pipe, drain, or culvert", 
                                    "Open")))
+
+# Use ifelse to define 'hole' as 'rabbit warren' instead
+data$den_substrate <- ifelse(data$den_substrate == "Hole", "Rabbit warren", as.character(data$den_substrate))
 
 # Create histogram plot
 den_substrate_hist <- ggplot(long, aes(x=den_substrate, y=percent, 
@@ -1430,10 +1433,10 @@ ggsave(summary_plot_den3, filename="output/summary plot dens3.jpeg",
        width=275, height=225, units="mm")
 
 ggsave(den_summary_plot, filename="output/den summary plot.jpeg", 
-       width=275, height=260, units="mm")
+       width=250, height=225, units="mm")
 
 ggsave(summary_barplots, filename="output/grazing zone habitat summary plot.jpeg", 
-       width=275, height=260, units="mm")
+       width=225, height=175, units="mm")
 ```
 
 # **Session information**
